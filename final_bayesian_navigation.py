@@ -12,7 +12,7 @@ implementation:
 4. the belief-MDP transition simulator (paper Eqs. 8-11 and 23)
 5. the injury-location reward with auxiliary eta variables
 6. the proposed DQN policy (paper Eqs. 15-20 and reported hyperparameters)
-7. model specific DQN policies used by Baseline, MAP, and Active Learning
+7. model-specific comparator policies for Baseline and Active Learning, with exact model-specific Q* via value iteration used by default for MAP
    (paper Eqs. 2, 21, and 22)
 8. evaluation over independent trials and 95% confidence intervals
 9. layout and policy-comparison plots
