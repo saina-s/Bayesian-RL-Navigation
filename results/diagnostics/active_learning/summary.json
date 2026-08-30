@@ -1,0 +1,65 @@
+{
+  "figure": 8,
+  "project_file": "final_bayesian_navigation_MAP_exact.py",
+  "comparator_bank": "old_outputs\\outputs\\planning\\figure8_comparator_qlearning_standalone.npz",
+  "trials": 1000,
+  "horizon": 50,
+  "base_eval_seed": 10000,
+  "qlearning_config": {
+    "episodes": 5000,
+    "horizon": 250,
+    "alpha": 0.1,
+    "gamma": 0.95,
+    "epsilon": 0.1
+  },
+  "global_q_bank": {
+    "rmse_all_q_entries": 0.5904258286207315,
+    "rmse_visited_q_entries": 0.4640588196593678,
+    "state_action_pair_coverage": 0.20628561253561253,
+    "mean_abs_exact_q_on_unvisited_entries": 0.36460006356756547,
+    "learned_greedy_action_is_exact_optimal_rate_all_model_states": 0.7236467236467237,
+    "exact_q_action_tie_fraction_all_model_states": 0.6228632478632479
+  },
+  "initial_state": {
+    "position": [
+      0,
+      0
+    ],
+    "posterior_entropy": 3.2958368660043296,
+    "learned_weighted_q": {
+      "UP": 0.7188421228454173,
+      "DOWN": 0.7466830798202579,
+      "LEFT": 0.7236484037865422,
+      "RIGHT": 0.7026565526864773
+    },
+    "exact_weighted_q": {
+      "UP": 0.7165142941215413,
+      "DOWN": 0.7434103526665546,
+      "LEFT": 0.7216965217210098,
+      "RIGHT": 0.7071347594702747
+    },
+    "learned_action": "DOWN",
+    "exact_optimal_actions": [
+      "DOWN"
+    ],
+    "learned_margin": 0.023034676033715784,
+    "exact_margin": 0.0217138309455448,
+    "learned_action_exact_optimal": true,
+    "zero_visit_posterior_mass_by_action": {
+      "UP": 0.0,
+      "DOWN": 0.0,
+      "LEFT": 0.0,
+      "RIGHT": 0.0
+    }
+  },
+  "trajectory": {
+    "learned_active_final_mean_injuries": 1.815,
+    "exact_active_final_mean_injuries": 2.0,
+    "learned_vs_exact_action_agreement_rate": 0.8204,
+    "mean_zero_visit_posterior_mass_selected_action": 0.0,
+    "fraction_steps_selected_action_has_any_zero_visit_posterior_mass": 0.0,
+    "mean_weighted_q_rmse": 0.010669678127833447,
+    "posterior_unchanged_rate": 0.94572,
+    "same_position_and_posterior_unchanged_rate": 0.36752
+  }
+}

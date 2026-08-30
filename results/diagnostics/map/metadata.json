@@ -1,0 +1,25 @@
+{
+  "figure": 9,
+  "true_model": "WII",
+  "gamma": 0.95,
+  "vi_tol": 1e-12,
+  "tie_atol": 1e-10,
+  "trials": 1000,
+  "horizon": 50,
+  "base_eval_seed": 10000,
+  "best_fixed_initial_model": {
+    "index": 5,
+    "label": "WEI",
+    "final": 2.0
+  },
+  "worst_fixed_initial_model": {
+    "index": 18,
+    "label": "IWW",
+    "final": 0.0
+  },
+  "envelope_final": {
+    "min": 0.0,
+    "max": 2.0,
+    "mean": 1.0058148148148147
+  }
+}

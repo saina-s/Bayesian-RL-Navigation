@@ -1,0 +1,4 @@
+family,label,final_mean,final_ci95,step_10,step_20,step_30,step_40,step_50
+model_tie_rule,model=first|action=first,0.05,0.019363133293217986,0.01,0.016,0.037,0.048,0.05
+model_tie_rule,model=sticky-random|action=first,1.137,0.057648531314880985,0.862,1.016,1.072,1.134,1.137
+model_tie_rule,model=random-each-step|action=first,1.417,0.05265921581841682,0.323,0.848,1.118,1.3,1.417
