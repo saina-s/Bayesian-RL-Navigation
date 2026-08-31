@@ -52,30 +52,38 @@ Each unknown cell can take one of three types:
 - `E`: empty,
 - `I`: injury/victim.
 
-With \(m\) unknown cells, this creates \(3^m\) possible environment models. Figures 8 and 9 both contain three unknown cells, so the uncertainty set contains
+With $m$ unknown cells, this creates $3^m$ possible environment models. Figures 8 and 9 both contain three unknown cells, so the uncertainty set contains
 
-\[3^3 = 27\]
+
+$$
+3^3 = 27
+$$
+
 
 possible maze models.
 
-Let the posterior over these models at time \(k\) be
+Let the posterior over these models at time $k$ be
 
-\[
+
+$$
 \vartheta_k =
 \left[
 P(\theta^\ast=\theta_1\mid\mathcal{D}_k),
 \ldots,
 P(\theta^\ast=\theta_{27}\mid\mathcal{D}_k)
 \right],
-\]
+$$
 
-where \(\mathcal{D}_k\) represents the states and actions observed up to time \(k\).
+
+where $\mathcal{D}_k$ represents the states and actions observed up to time $k$.
 
 The paper defines the belief state as
 
-\[
+
+$$
 b_k = [s_k,\vartheta_k]^T.
-\]
+$$
+
 
 For the injury-location task, the physical state additionally contains auxiliary binary variables that track whether each potential injury has already been found.
 
@@ -83,9 +91,10 @@ For the injury-location task, the physical state additionally contains auxiliary
 
 ### 2.2 Bayesian posterior update
 
-After taking action \(a\), transitioning from state \(s\), and observing a successor state \(s'\), the model posterior is updated using Bayes' rule:
+After taking action $a$, transitioning from state $s$, and observing a successor state $s'$, the model posterior is updated using Bayes' rule:
 
-\[
+
+$$
 \vartheta'(j)
 =
 \frac{
@@ -93,7 +102,8 @@ P(s' \mid s,a,\theta_j)\vartheta(j)
 }{
 \sum_l P(s' \mid s,a,\theta_l)\vartheta(l)
 }.
-\]
+$$
+
 
 This posterior is part of the next belief state, so action selection can depend not only on the robot location but also on current uncertainty about the environment.
 
@@ -108,9 +118,9 @@ The paper uses four discrete actions:
 - left,
 - right.
 
-Motion is stochastic. The intended direction occurs with probability \(0.8\), while each perpendicular direction occurs with probability \(0.1\).
+Motion is stochastic. The intended direction occurs with probability $0.8$, while each perpendicular direction occurs with probability $0.1$.
 
-The reproduction uses the same \(0.8/0.1/0.1\) motion model.
+The reproduction uses the same $0.8/0.1/0.1$ motion model.
 
 ---
 
@@ -118,13 +128,15 @@ The reproduction uses the same \(0.8/0.1/0.1\) motion model.
 
 For the injury-location experiments, the model-specific reward is
 
-\[
+
+$$
 R_\theta(s,a,s') =
 \begin{cases}
 1, & \text{if a previously unlocated injury is found},\\
 0, & \text{otherwise}.
 \end{cases}
-\]
+$$
+
 
 Auxiliary variables ensure that the same injury is not rewarded repeatedly.
 
@@ -138,7 +150,8 @@ The evaluation metric is the **average cumulative number of located injuries** a
 
 The proposed method learns a Q-function over the belief space:
 
-\[
+
+$$
 Q^\ast(b,a)
 =
 \mathbb{E}
@@ -146,7 +159,8 @@ Q^\ast(b,a)
 \sum_{t=0}^{\infty}
 \gamma^t \tilde{R}(b_t,a_t)
 \right].
-\]
+$$
+
 
 A DQN approximates this function and selects actions greedily at test time.
 
@@ -157,19 +171,19 @@ The reported network/training hyperparameters were reproduced:
 | Hidden layers | 3 |
 | Units per hidden layer | 128 |
 | Activation | ReLU |
-| Learning rate | \(5\times10^{-4}\) |
-| Replay capacity | \(10^5\) |
+| Learning rate | $5\times10^{-4}$ |
+| Replay capacity | $10^5$ |
 | Batch size | 64 |
-| Discount \(\gamma\) | 0.95 |
+| Discount $\gamma$ | 0.95 |
 | Epsilon | 0.1 |
-| Target soft-update \(\tau\) | \(10^{-3}\) |
+| Target soft-update $\tau$ | $10^{-3}$ |
 | Q-network update frequency | 4 |
 | Training episodes | 5,000 |
 | Training horizon | 250 |
 | Evaluation horizon | 50 |
 | Evaluation trials | 1,000 |
 
-The reproduction uses a Q-network and target network with the same three-layer \(128\)-unit architecture.
+The reproduction uses a Q-network and target network with the same three-layer $128$-unit architecture.
 
 ---
 
@@ -185,28 +199,34 @@ This is an optimistic comparator: it represents navigation without uncertainty a
 
 The paper defines the MAP model by
 
-\[
+
+$$
 \theta_k^{MAP}
 =
 \arg\max_{\theta_i}
 \vartheta_k(i),
-\]
+$$
+
 
 then selects
 
-\[
+
+$$
 a_k
 =
 \arg\max_a
 q^\ast_{\theta_k^{MAP}}(s_k,a).
-\]
+$$
+
 
 At first sight this appears fully specified. However, Figures 8 and 9 use a uniform prior over all three cell types. Consequently, at the initial state,
 
-\[
+
+$$
 \vartheta_0(i)=\frac{1}{27}
 \qquad \forall i.
-\]
+$$
+
 
 Therefore the first `argmax` is a **27-way tie**.
 
@@ -220,7 +240,8 @@ These ambiguities motivated the MAP diagnostic analysis in Section 8.
 
 The paper defines the one-step Active-Learning comparator as
 
-\[
+
+$$
 a_k
 =
 \arg\max_a
@@ -231,7 +252,8 @@ a_k
 \sum_i
 \vartheta_k(i)
 q^\ast_{\theta_i}(s_k,a).
-\]
+$$
+
 
 Unlike MAP, this policy uses all model-specific Q-functions rather than selecting a single model.
 
@@ -252,23 +274,27 @@ Figure 8 uses:
 - 27 possible environment models;
 - uniform prior for every unknown cell:
 
-\[
+
+$$
 p_0^i = [1/3,1/3,1/3];
-\]
+$$
+
 
 - true test environment:
 
-\[
+
+$$
 \theta^\ast = [I,W,I].
-\]
+$$
+
 
 There are two injuries to locate.
 
 The paper reports:
 
 - Baseline reaches both injuries quickly;
-- the proposed Bayesian policy first finds one injury rapidly and then gradually approaches approximately \(1.5\) located injuries by step 50;
-- MAP rises gradually to approximately \(1.0\);
+- the proposed Bayesian policy first finds one injury rapidly and then gradually approaches approximately $1.5$ located injuries by step 50;
+- MAP rises gradually to approximately $1.0$;
 - Active Learning remains essentially at zero throughout the 50-step horizon.
 
 ---
@@ -284,15 +310,19 @@ Figure 9 uses:
 - 27 possible environment models;
 - uniform prior:
 
-\[
+
+$$
 p_0^i = [1/3,1/3,1/3];
-\]
+$$
+
 
 - true test environment:
 
-\[
+
+$$
 \theta^\ast = [W,I,I].
-\]
+$$
+
 
 Again, there are two injuries.
 
@@ -300,7 +330,7 @@ The paper reports:
 
 - Baseline reaches two injuries rapidly;
 - the proposed Bayesian policy gradually approaches the Baseline and is close to two injuries by step 50;
-- MAP remains weak, reaching only roughly \(0.4\);
+- MAP remains weak, reaching only roughly $0.4$;
 - Active Learning remains essentially at zero.
 
 ---
@@ -362,9 +392,9 @@ A sensitivity check that removed the special wall observation did not explain th
 Two different ties are treated separately:
 
 1. **model posterior tie**, in
-   \(\arg\max_i\vartheta_k(i)\);
+   $\arg\max_i\vartheta_k(i)$;
 2. **greedy action tie**, in
-   \(\arg\max_a q_\theta(s,a)\).
+   $\arg\max_a q_\theta(s,a)$.
 
 The final MAP reproduction uses:
 
@@ -457,9 +487,11 @@ experiments/diagnostics/map_exact_q_diagnostic.py
 
 Both target experiments use a uniform prior. At time zero,
 
-\[
+
+$$
 P(\theta^\ast=\theta_i)=1/27
-\]
+$$
+
 
 for all 27 models.
 
@@ -489,7 +521,8 @@ The model tie is not the only ambiguity.
 
 For example, under an all-wall model (`WWW`), there are no injuries and the exact injury-reward Q-function can satisfy
 
-\[
+
+$$
 Q(s,\mathrm{UP})
 =
 Q(s,\mathrm{DOWN})
@@ -499,7 +532,8 @@ Q(s,\mathrm{LEFT})
 Q(s,\mathrm{RIGHT})
 =
 0
-\]
+$$
+
 
 at relevant states.
 
@@ -530,13 +564,13 @@ A single convention was required to work for **both** Figures 8 and 9; separate 
 The final convention is:
 
 1. choose the first model among posterior maximizers;
-2. use exact model-specific \(Q^\ast_\theta\) from value iteration;
+2. use exact model-specific $Q^\ast_\theta$ from value iteration;
 3. if several actions are exactly optimal, sample uniformly from the tied actions.
 
 Under this common convention:
 
 - Figure 8 MAP rises toward roughly the same endpoint as the paper;
-- Figure 9 MAP reaches roughly \(0.4\) at step 50, closely matching the paper.
+- Figure 9 MAP reaches roughly $0.4$ at step 50, closely matching the paper.
 
 This is treated as a **conditional reproduction**: the curve is reproducible after making an implementation convention explicit that is not uniquely determined by Equation (21).
 
@@ -586,7 +620,7 @@ To test this, Active Learning was evaluated using model-specific **tabular Q-lea
 
 **Result:** the hypothesis was not sufficient.
 
-For Figure 8, tabular Active Learning was weaker than the neural implementation but still reached approximately \(1.8\) injuries by step 50—far above the near-zero curve in the paper.
+For Figure 8, tabular Active Learning was weaker than the neural implementation but still reached approximately $1.8$ injuries by step 50—far above the near-zero curve in the paper.
 
 ---
 
@@ -594,7 +628,7 @@ For Figure 8, tabular Active Learning was weaker than the neural implementation 
 
 The strongest possible control was then performed: learned model-specific Q-functions were removed entirely.
 
-For each of the 27 models, \(Q^\ast_\theta(s,a)\) was computed with exact value iteration. Equation (22) was then evaluated directly with these exact Q-functions.
+For each of the 27 models, $Q^\ast_\theta(s,a)$ was computed with exact value iteration. Equation (22) was then evaluated directly with these exact Q-functions.
 
 **Result:** Active Learning became stronger, not weaker.
 
