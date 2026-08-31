@@ -921,7 +921,6 @@ For **Active Learning**, no equivalent resolution was found. The near-zero perfo
 
 The outcome of this project is therefore more than a two-figure reproduction: it is a documented reproducibility study showing how comparator construction and seemingly minor tie semantics can materially affect conclusions in reinforcement-learning experiments.
 
-Future work in this repository will be separated from the reproduction study and will investigate additional robustness and methodological extensions of Bayesian navigation under model uncertainty.
 
 ---
 
