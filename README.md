@@ -1,9 +1,55 @@
-# Reproduction Report
+# Bayesian RL Navigation
 
-## Bayesian Reinforcement Learning for Navigation in Unknown Environments
+**Reproduction + diagnostic analysis of Bayesian reinforcement learning for navigation in unknown environments**
 
-**Target paper:** Mohammad Alali and Mahdi Imani, *Bayesian reinforcement learning for navigation planning in unknown environments*, Frontiers in Artificial Intelligence, 2024.  
-**DOI:** https://doi.org/10.3389/frai.2024.1308031
+[**Paper**](https://doi.org/10.3389/frai.2024.1308031) ·
+[**Main code**](final_bayesian_navigation.py) ·
+[**Results**](results/main_results/) ·
+[**Diagnostics**](experiments/diagnostics/)
+
+> Independent reproduction of the injury-location experiments in **Figures 8 and 9** of Alali & Imani (2024), followed by a controlled investigation of the MAP and Active-Learning discrepancies.
+
+## Reproduction Summary
+
+| Component | Status | Main takeaway |
+|---|---|---|
+| **Bayesian planning policy** | ✅ Reproduced closely | Belief-space DQN reproduces the reported qualitative behavior and final performance closely |
+| **Known-model Baseline** | ✅ Reproduced | Rapidly reaches both injuries as expected |
+| **MAP** | ✅ Conditionally reproduced | Strongly depends on two under-specified tie-breaking choices; exact-Q diagnostics isolate the effect |
+| **Active Learning** | ⚠️ Persistent discrepancy | The reported near-zero behavior does not reappear with neural, tabular, independently seeded, or exact-Q implementations |
+
+<p align="center">
+  <img src="results/main_results/figure8/figure8c_all_policies.png" width="49%" alt="Figure 8 reproduction">
+  <img src="results/main_results/figure9/figure9c_all_policies.png" width="49%" alt="Figure 9 reproduction">
+</p>
+
+### Key findings
+
+**MAP — tie handling is algorithmically consequential.**  
+With the uniform prior used in Figures 8 and 9, all 27 environment models initially have identical posterior probability. The MAP model is therefore not uniquely defined, and a second ambiguity appears when several actions share the same maximal Q-value. Exact value iteration shows that these choices alone can move MAP performance across a very large range.
+
+**Active Learning — the discrepancy survives stronger controls.**  
+The near-zero curve reported in the paper was not recovered with common-seed DQNs, independently seeded DQNs, tabular Q-learning, or exact model-specific optimal Q-functions. In fact, replacing learned Q-functions with exact $Q^\ast$ makes Active Learning stronger rather than weaker.
+
+**Research path:** initial reproduction → discrepancy detection → controlled diagnostics → MAP resolution → unresolved Active-Learning discrepancy.
+
+### Contents
+
+- [1. Scope and goals](#1-scope-and-goals)
+- [2. Original formulation](#2-original-formulation)
+- [3. Policies reproduced](#3-policies-reproduced)
+- [4. Target experiments](#4-target-experiments)
+- [5. Implementation](#5-implementation)
+- [6. Implementation assumptions](#6-implementation-assumptions-not-fully-determined-by-the-paper)
+- [7. Main reproduction results](#7-main-reproduction-results)
+- [8. MAP diagnostic analysis](#8-map-diagnostic-analysis)
+- [9. Active-Learning diagnostic analysis](#9-active-learning-diagnostic-analysis)
+- [10. What was successfully reproduced](#10-what-was-successfully-reproduced)
+- [11. Reproducibility lessons](#11-reproducibility-lessons)
+- [12. Limitations](#12-limitations-of-this-reproduction)
+- [13. Repository artifacts](#13-repository-artifacts)
+- [14. Reproduction commands](#14-reproduction-commands)
+- [15. Conclusion](#15-conclusion)
 
 ---
 
@@ -31,14 +77,7 @@ The two main questions became:
 - **MAP:** can the reported MAP behavior be explained by implementation choices that are not uniquely specified by Equation (21)?
 - **Active Learning:** can the near-zero Active-Learning performance in Figures 8 and 9 be recovered under reasonable implementations of Equation (22)?
 
-The final conclusions are:
-
-- the proposed Bayesian policy is reproduced closely;
-- the known-model Baseline is reproduced;
-- MAP is strongly dependent on model-level and action-level tie handling, and the reported curves can be closely recovered after explicitly resolving those ambiguities;
-- the reported near-zero Active-Learning behavior could not be recovered, even after testing DQN, independently seeded DQN, tabular Q-learning, and exact model-specific optimal Q-functions.
-
-This report documents both the successful reproduction and the diagnostic path that led to these conclusions.
+The remainder of this README documents both the successful reproduction and the diagnostic path that led to these conclusions.
 
 ---
 
@@ -124,7 +163,8 @@ For the injury-location experiments, the model-specific reward is
 
 
 $$
-R_\theta(s,a,s') =\begin{cases}
+R_\theta(s,a,s') =
+\begin{cases}
 1, & \text{if a previously unlocated injury is found},\\
 0, & \text{otherwise}.
 \end{cases}
@@ -237,7 +277,7 @@ The reproduction implements Equation (22) directly.
 
 ## 4. Target experiments
 
-## 4.1 Figure 8: 4×4 maze
+### 4.1 Figure 8: 4×4 maze
 
 Figure 8 uses:
 
@@ -271,7 +311,7 @@ The paper reports:
 
 ---
 
-## 4.2 Figure 9: 6×6 maze
+### 4.2 Figure 9: 6×6 maze
 
 Figure 9 uses:
 
@@ -388,6 +428,8 @@ This is an implementation choice because the paper specifies the mathematical be
 
 ## 7. Main reproduction results
 
+> **At a glance:** Proposed ✅ · Baseline ✅ · MAP ✅ conditional · Active Learning ⚠️ unresolved
+
 The final curated plots are stored in:
 
 ```text
@@ -397,7 +439,7 @@ results/main_results/figure9/
 
 ### 7.1 Figure 8
 
-![Figure 8 reproduction](../results/main_results/figure8/figure8c_all_policies.png)
+![Figure 8 reproduction](results/main_results/figure8/figure8c_all_policies.png)
 
 At step 50, the reproduction is approximately:
 
@@ -420,7 +462,7 @@ The major unresolved difference is Active Learning.
 
 ### 7.2 Figure 9
 
-![Figure 9 reproduction](../results/main_results/figure9/figure9c_all_policies.png)
+![Figure 9 reproduction](results/main_results/figure9/figure9c_all_policies.png)
 
 At step 50, the reproduction is approximately:
 
@@ -440,6 +482,8 @@ Again, Active Learning is the substantial outlier.
 ---
 
 ## 8. MAP diagnostic analysis
+
+> **Question:** Is the MAP mismatch caused by DQN approximation, or by ambiguity in the policy definition?
 
 The initial reproduction produced MAP curves that changed drastically when apparently minor implementation choices were changed.
 
@@ -481,7 +525,7 @@ A diagnostic forced each of the 27 tied models to be selected as the initial MAP
 
 For Figure 9, the step-50 performance spanned almost the full task range: some fixed choices produced essentially zero injuries, while others produced approximately two.
 
-![Fixed-model sensitivity](../results/diagnostics/map/map_fixed_initial_model_sensitivity.png)
+![Fixed-model sensitivity](results/diagnostics/map/map_fixed_initial_model_sensitivity.png)
 
 This demonstrates that the initial posterior tie alone is sufficient to produce major differences in the reported MAP curve.
 
@@ -513,7 +557,7 @@ To determine whether this sensitivity was caused by neural approximation, exact 
 
 The resulting diagnostic envelope is shown below.
 
-![Exact-Q MAP envelope](../results/diagnostics/map/map_exact_q_envelope.png)
+![Exact-Q MAP envelope](results/diagnostics/map/map_exact_q_envelope.png)
 
 The large sensitivity remains with exact Q-values. Therefore it is not primarily a DQN-training failure.
 
@@ -541,6 +585,8 @@ This is treated as a **conditional reproduction**: the curve is reproducible aft
 ---
 
 ## 9. Active-Learning diagnostic analysis
+
+> **Question:** Can the reported near-zero Active-Learning curve be recovered by changing the model-specific Q backend or its training details?
 
 Active Learning required a different investigation.
 
@@ -606,7 +652,7 @@ This is an important observation: the discrepancy cannot be explained simply by 
 
 The final Figure 8 diagnostic compared tabular learned Q-values against exact optimal Q-values along the states actually visited by Active Learning.
 
-![Learned vs exact Active Learning](../results/diagnostics/active_learning/active_learned_vs_exact.png)
+![Learned vs exact Active Learning](results/diagnostics/active_learning/active_learned_vs_exact.png)
 
 The learned policy and exact policy remain broadly aligned.
 
@@ -620,9 +666,9 @@ Measured diagnostics included approximately:
 
 The posterior frequently remains unchanged—consistent with the qualitative weakness discussed in the paper—but this does not force the policy into the near-zero behavior of the published curve.
 
-![Action agreement](../results/diagnostics/active_learning/action_agreement_by_step.png)
+![Action agreement](results/diagnostics/active_learning/action_agreement_by_step.png)
 
-![Weighted-Q error](../results/diagnostics/active_learning/weighted_q_error_by_step.png)
+![Weighted-Q error](results/diagnostics/active_learning/weighted_q_error_by_step.png)
 
 ---
 
@@ -873,7 +919,7 @@ For **MAP**, the disagreement can be traced to a concrete reproducibility issue:
 
 For **Active Learning**, no equivalent resolution was found. The near-zero performance reported in the paper is not produced by direct evaluation of Equation (22) under DQN, independent DQN seeds, tabular Q-learning, or exact model-specific optimal Q-functions. In particular, exact Q-functions make Active Learning more effective rather than less effective.
 
-The outcome of this project is therefore not only a reproduction of two experimental figures. It is also a documented case study in how seemingly minor implementation details—especially comparator construction and tie semantics—can materially affect conclusions in reinforcement-learning experiments.
+The outcome of this project is therefore more than a two-figure reproduction: it is a documented reproducibility study showing how comparator construction and seemingly minor tie semantics can materially affect conclusions in reinforcement-learning experiments.
 
 Future work in this repository will be separated from the reproduction study and will investigate additional robustness and methodological extensions of Bayesian navigation under model uncertainty.
 
