@@ -95,13 +95,7 @@ After taking action $a$, transitioning from state $s$, and observing a successor
 
 
 $$
-\vartheta'(j)
-=
-\frac{
-P(s' \mid s,a,\theta_j)\vartheta(j)
-}{
-\sum_l P(s' \mid s,a,\theta_l)\vartheta(l)
-}.
+\vartheta'(j)=\frac{P(s' \mid s,a,\theta_j)\vartheta(j)}{\sum_l P(s' \mid s,a,\theta_l)\vartheta(l)}.
 $$
 
 
@@ -130,8 +124,7 @@ For the injury-location experiments, the model-specific reward is
 
 
 $$
-R_\theta(s,a,s') =
-\begin{cases}
+R_\theta(s,a,s') =\begin{cases}
 1, & \text{if a previously unlocated injury is found},\\
 0, & \text{otherwise}.
 \end{cases}
@@ -152,13 +145,7 @@ The proposed method learns a Q-function over the belief space:
 
 
 $$
-Q^\ast(b,a)
-=
-\mathbb{E}
-\left[
-\sum_{t=0}^{\infty}
-\gamma^t \tilde{R}(b_t,a_t)
-\right].
+Q^\ast(b,a)=\mathbb{E}\left[\sum_{t=0}^{\infty}\gamma^t \tilde{R}(b_t,a_t)\right].
 $$
 
 
@@ -201,10 +188,7 @@ The paper defines the MAP model by
 
 
 $$
-\theta_k^{MAP}
-=
-\arg\max_{\theta_i}
-\vartheta_k(i),
+\theta_k^{MAP}=\arg\max_{\theta_i}\vartheta_k(i),
 $$
 
 
@@ -212,10 +196,7 @@ then selects
 
 
 $$
-a_k
-=
-\arg\max_a
-q^\ast_{\theta_k^{MAP}}(s_k,a).
+a_k=\arg\max_aq^\ast_{\theta_k^{MAP}}(s_k,a).
 $$
 
 
@@ -242,16 +223,7 @@ The paper defines the one-step Active-Learning comparator as
 
 
 $$
-a_k
-=
-\arg\max_a
-\mathbb{E}_{\vartheta_k}
-[q^\ast_\theta(s_k,a)]
-=
-\arg\max_a
-\sum_i
-\vartheta_k(i)
-q^\ast_{\theta_i}(s_k,a).
+a_k=\arg\max_a\mathbb{E}_{\vartheta_k}[q^\ast_\theta(s_k,a)]=\arg\max_a\sum_i\vartheta_k(i)q^\ast_{\theta_i}(s_k,a).
 $$
 
 
@@ -523,15 +495,7 @@ For example, under an all-wall model (`WWW`), there are no injuries and the exac
 
 
 $$
-Q(s,\mathrm{UP})
-=
-Q(s,\mathrm{DOWN})
-=
-Q(s,\mathrm{LEFT})
-=
-Q(s,\mathrm{RIGHT})
-=
-0
+Q(s,\mathrm{UP})=Q(s,\mathrm{DOWN})=Q(s,\mathrm{LEFT})=Q(s,\mathrm{RIGHT})=0
 $$
 
 
