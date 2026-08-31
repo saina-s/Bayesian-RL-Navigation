@@ -54,9 +54,7 @@ Each unknown cell can take one of three types:
 
 With \(m\) unknown cells, this creates \(3^m\) possible environment models. Figures 8 and 9 both contain three unknown cells, so the uncertainty set contains
 
-\[
-3^3 = 27
-\]
+\[3^3 = 27\]
 
 possible maze models.
 
